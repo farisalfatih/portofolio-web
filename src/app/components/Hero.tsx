@@ -1,5 +1,6 @@
 import { motion } from 'motion/react';
 import { Github, Linkedin, Instagram, ChevronDown } from 'lucide-react';
+import profileImage from '../../assets/images/profile.png';
 
 interface HeroProps {
   onScrollToPortfolio: () => void;
@@ -139,7 +140,7 @@ export function Hero({ onScrollToPortfolio, onScrollToContact }: HeroProps) {
             >
               <div className="absolute inset-0 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-2xl blur-xl opacity-50" />
               <img
-                src="https://images.unsplash.com/photo-1631624220291-8f191fbdb543?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtYWxlJTIwZGV2ZWxvcGVyJTIwd29ya2luZ3xlbnwxfHx8fDE3NzUzODkxMjZ8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
+                src={profileImage}
                 alt="Mohammad Faris Al Fatih"
                 className="relative w-full max-w-md rounded-2xl shadow-2xl object-cover"
               />

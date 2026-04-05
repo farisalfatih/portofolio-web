@@ -22,7 +22,7 @@ export function Footer() {
             transition={{ duration: 0.6 }}
           >
             <h3 className="text-2xl mb-3 bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent font-bold">
-              Mohammad Faris
+              Mohammad Faris Al Fatih
             </h3>
             <p className="text-gray-400 text-sm leading-relaxed">
               Web Developer & Aspiring Data Engineer yang passionate dalam membangun aplikasi modern dan data-driven.
@@ -76,7 +76,7 @@ export function Footer() {
               ))}
             </div>
             <p className="text-gray-400 text-sm mt-4">
-              farisalfatih777@example.com
+              farisalfatih777@gmail.com
             </p>
           </motion.div>
         </div>

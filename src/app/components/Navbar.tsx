@@ -47,7 +47,7 @@ export function Navbar({ darkMode, toggleDarkMode }: NavbarProps) {
             whileHover={{ scale: 1.05 }}
             className="text-2xl font-bold bg-gradient-to-r from-cyan-500 to-blue-500 bg-clip-text text-transparent"
           >
-            {'<MFA />'}
+            {'<MFAF />'}
           </motion.a>
 
           {/* Desktop Navigation */}
