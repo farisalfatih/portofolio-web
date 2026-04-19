@@ -45,6 +45,9 @@ services:
       - "3001:80"
     depends_on:
       - backend
+    networks:
+      - internal
+      - proxy_default
 
 volumes:
   postgres_data:
