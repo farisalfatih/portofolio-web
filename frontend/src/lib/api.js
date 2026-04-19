@@ -1,63 +1,80 @@
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000'
+// BASE_URL kosong = same-origin
+// Dev  : Vite proxy /api → localhost:5000
+// Prod : Nginx proxy /api → backend container
+const BASE = ''
 
-function getToken() {
+function token() {
   return localStorage.getItem('portfolio_token')
 }
 
-async function request(path, options = {}) {
-  const token = getToken()
-  const headers = { 'Content-Type': 'application/json', ...options.headers }
-  if (token) headers['Authorization'] = `Bearer ${token}`
-
-  const res = await fetch(`${BASE_URL}${path}`, { ...options, headers })
+async function req(path, opts = {}) {
+  const headers = { 'Content-Type': 'application/json', ...opts.headers }
+  if (token()) headers['Authorization'] = `Bearer ${token()}`
+  const res  = await fetch(BASE + path, { ...opts, headers })
   const data = await res.json()
+  if (!res.ok) throw new Error(data.message || 'Request gagal')
+  return data
+}
 
-  if (!res.ok) {
-    throw new Error(data.message || 'Request gagal')
-  }
+async function upload(path, fd, extra = {}) {
+  const headers = { ...extra }
+  if (token()) headers['Authorization'] = `Bearer ${token()}`
+  const res  = await fetch(BASE + path, { method: 'POST', headers, body: fd })
+  const data = await res.json()
+  if (!res.ok) throw new Error(data.message || 'Upload gagal')
   return data
 }
 
 export const api = {
   // Auth
-  login: (body) => request('/api/auth/login', { method: 'POST', body: JSON.stringify(body) }),
-  me: () => request('/api/auth/me'),
-  changePassword: (body) => request('/api/auth/change-password', { method: 'PUT', body: JSON.stringify(body) }),
+  login:          (b)    => req('/api/auth/login',           { method: 'POST', body: JSON.stringify(b) }),
+  me:             ()     => req('/api/auth/me'),
+  changePassword: (b)    => req('/api/auth/change-password', { method: 'PUT',  body: JSON.stringify(b) }),
+
+  // Upload
+  uploadImage: (file, oldUrl = '') => {
+    const fd = new FormData(); fd.append('file', file)
+    return upload('/api/upload/image', fd, { 'x-old-url': oldUrl })
+  },
+  uploadCV: (file, oldUrl = '') => {
+    const fd = new FormData(); fd.append('file', file)
+    return upload('/api/upload/cv', fd, { 'x-old-url': oldUrl })
+  },
 
   // Hero
-  getHero: () => request('/api/hero'),
-  updateHero: (body) => request('/api/hero', { method: 'PUT', body: JSON.stringify(body) }),
+  getHero:    ()  => req('/api/hero'),
+  updateHero: (b) => req('/api/hero', { method: 'PUT', body: JSON.stringify(b) }),
 
   // About
-  getAbout: () => request('/api/about'),
-  updateAbout: (body) => request('/api/about', { method: 'PUT', body: JSON.stringify(body) }),
+  getAbout:    ()  => req('/api/about'),
+  updateAbout: (b) => req('/api/about', { method: 'PUT', body: JSON.stringify(b) }),
 
   // Skills
-  getSkills: () => request('/api/skills'),
-  getSkillsRaw: () => request('/api/skills/raw'),
-  createCategory: (body) => request('/api/skills/categories', { method: 'POST', body: JSON.stringify(body) }),
-  updateCategory: (id, body) => request(`/api/skills/categories/${id}`, { method: 'PUT', body: JSON.stringify(body) }),
-  deleteCategory: (id) => request(`/api/skills/categories/${id}`, { method: 'DELETE' }),
-  createSkill: (body) => request('/api/skills', { method: 'POST', body: JSON.stringify(body) }),
-  updateSkill: (id, body) => request(`/api/skills/${id}`, { method: 'PUT', body: JSON.stringify(body) }),
-  deleteSkill: (id) => request(`/api/skills/${id}`, { method: 'DELETE' }),
+  getSkills:      ()       => req('/api/skills'),
+  getSkillsRaw:   ()       => req('/api/skills/raw'),
+  createCategory: (b)      => req('/api/skills/categories',     { method: 'POST',   body: JSON.stringify(b) }),
+  updateCategory: (id, b)  => req(`/api/skills/categories/${id}`,{ method: 'PUT',   body: JSON.stringify(b) }),
+  deleteCategory: (id)     => req(`/api/skills/categories/${id}`,{ method: 'DELETE' }),
+  createSkill:    (b)      => req('/api/skills',                { method: 'POST',   body: JSON.stringify(b) }),
+  updateSkill:    (id, b)  => req(`/api/skills/${id}`,          { method: 'PUT',    body: JSON.stringify(b) }),
+  deleteSkill:    (id)     => req(`/api/skills/${id}`,          { method: 'DELETE' }),
 
   // Projects
-  getProjects: (type) => request(`/api/projects${type && type !== 'all' ? `?type=${type}` : ''}`),
-  getProject: (id) => request(`/api/projects/${id}`),
-  createProject: (body) => request('/api/projects', { method: 'POST', body: JSON.stringify(body) }),
-  updateProject: (id, body) => request(`/api/projects/${id}`, { method: 'PUT', body: JSON.stringify(body) }),
-  deleteProject: (id) => request(`/api/projects/${id}`, { method: 'DELETE' }),
+  getProjects:   (type)    => req(`/api/projects${type && type !== 'all' ? `?type=${type}` : ''}`),
+  getProject:    (id)      => req(`/api/projects/${id}`),
+  createProject: (b)       => req('/api/projects',   { method: 'POST',   body: JSON.stringify(b) }),
+  updateProject: (id, b)   => req(`/api/projects/${id}`, { method: 'PUT', body: JSON.stringify(b) }),
+  deleteProject: (id)      => req(`/api/projects/${id}`, { method: 'DELETE' }),
 
   // Contact
-  getContact: () => request('/api/contact'),
-  updateContact: (body) => request('/api/contact', { method: 'PUT', body: JSON.stringify(body) }),
+  getContact:    ()  => req('/api/contact'),
+  updateContact: (b) => req('/api/contact', { method: 'PUT', body: JSON.stringify(b) }),
 
   // Blog
-  getBlogPosts: () => request('/api/blog'),
-  getBlogPostsAll: () => request('/api/blog/all'),
-  getBlogPost: (id) => request(`/api/blog/${id}`),
-  createBlogPost: (body) => request('/api/blog', { method: 'POST', body: JSON.stringify(body) }),
-  updateBlogPost: (id, body) => request(`/api/blog/${id}`, { method: 'PUT', body: JSON.stringify(body) }),
-  deleteBlogPost: (id) => request(`/api/blog/${id}`, { method: 'DELETE' }),
+  getBlogPosts:    ()       => req('/api/blog'),
+  getBlogPostsAll: ()       => req('/api/blog/all'),
+  getBlogPost:     (id)     => req(`/api/blog/${id}`),
+  createBlogPost:  (b)      => req('/api/blog',       { method: 'POST',   body: JSON.stringify(b) }),
+  updateBlogPost:  (id, b)  => req(`/api/blog/${id}`, { method: 'PUT',    body: JSON.stringify(b) }),
+  deleteBlogPost:  (id)     => req(`/api/blog/${id}`, { method: 'DELETE' }),
 }

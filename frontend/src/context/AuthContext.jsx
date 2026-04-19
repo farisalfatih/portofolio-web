@@ -4,14 +4,14 @@ import { api } from '../lib/api'
 const AuthContext = createContext(null)
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null)
+  const [user, setUser]       = useState(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const token = localStorage.getItem('portfolio_token')
-    if (token) {
+    const t = localStorage.getItem('portfolio_token')
+    if (t) {
       api.me()
-        .then((data) => setUser(data.user))
+        .then(d  => setUser(d.user))
         .catch(() => localStorage.removeItem('portfolio_token'))
         .finally(() => setLoading(false))
     } else {

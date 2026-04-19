@@ -1,16 +1,12 @@
-version: '3.8'
-
 services:
   postgres:
     image: postgres:16-alpine
     container_name: portfolio_db
     restart: unless-stopped
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-portfolio_user}
+      POSTGRES_USER:     ${POSTGRES_USER:-portfolio_user}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-portfolio_pass}
-      POSTGRES_DB: ${POSTGRES_DB:-portfolio_db}
-    ports:
-      - "5432:5432"
+      POSTGRES_DB:       ${POSTGRES_DB:-portfolio_db}
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./backend/src/db/init.sql:/docker-entrypoint-initdb.d/init.sql
@@ -23,30 +19,25 @@ services:
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile
     container_name: portfolio_backend
     restart: unless-stopped
     environment:
-      NODE_ENV: production
-      PORT: 5000
-      DATABASE_URL: postgresql://${POSTGRES_USER:-portfolio_user}:${POSTGRES_PASSWORD:-portfolio_pass}@postgres:5432/${POSTGRES_DB:-portfolio_db}
-      JWT_SECRET: ${JWT_SECRET:-supersecretjwt2024changeme}
-      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
-      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3000}
-    ports:
-      - "5000:5000"
+      NODE_ENV:       production
+      PORT:           5000
+      DATABASE_URL:   postgresql://${POSTGRES_USER:-portfolio_user}:${POSTGRES_PASSWORD:-portfolio_pass}@postgres:5432/${POSTGRES_DB:-portfolio_db}
+      JWT_SECRET:     ${JWT_SECRET:-dev_secret_ganti_ini_di_production}
+      JWT_EXPIRES_IN: 7d
+    expose:
+      - "5000"
     depends_on:
       postgres:
         condition: service_healthy
     volumes:
-      - ./backend/uploads:/app/uploads
+      - uploads_data:/app/uploads
 
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile
-      args:
-        VITE_API_URL: ${VITE_API_URL:-http://localhost:5000}
     container_name: portfolio_frontend
     restart: unless-stopped
     ports:
@@ -56,3 +47,4 @@ services:
 
 volumes:
   postgres_data:
+  uploads_data:

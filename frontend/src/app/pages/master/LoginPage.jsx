@@ -118,9 +118,6 @@ export function LoginPage() {
           </div>
         </div>
 
-        <p className="text-center text-gray-600 text-xs mt-4">
-          Default: admin / admin123
-        </p>
       </motion.div>
     </div>
   )

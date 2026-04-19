@@ -23,6 +23,8 @@ CREATE TABLE IF NOT EXISTS hero (
   instagram_url VARCHAR(255) DEFAULT '',
   cv_url VARCHAR(500) DEFAULT '',
   profile_image_url VARCHAR(500) DEFAULT '',
+  favicon_url VARCHAR(500) DEFAULT '',
+  og_image_url VARCHAR(500) DEFAULT '',
   updated_at TIMESTAMP DEFAULT NOW()
 );
 
@@ -112,7 +114,7 @@ END $$;
 
 -- Default admin user (password: admin123)
 INSERT INTO users (username, email, password_hash) VALUES
-  ('admin', 'farisalfatih777@gmail.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi')
+  ('admin', 'farisalfatih777@gmail.com', '$2b$10$QFHasHRlo5GV0zvDdcd.ZuSWr/F5pAemON2TTNKvOHE7SIcTA6G5u')
 ON CONFLICT DO NOTHING;
 
 -- Hero defaults
@@ -201,3 +203,10 @@ INSERT INTO contact_info (email, phone, location, whatsapp_url, maps_url) VALUES
     'https://www.google.com/maps/place/Gresik,+Indonesia'
   )
 ON CONFLICT DO NOTHING;
+
+-- Migration: tambah kolom favicon dan og_image jika belum ada
+DO $$ BEGIN
+  ALTER TABLE hero ADD COLUMN IF NOT EXISTS favicon_url VARCHAR(500) DEFAULT '';
+  ALTER TABLE hero ADD COLUMN IF NOT EXISTS og_image_url VARCHAR(500) DEFAULT '';
+EXCEPTION WHEN others THEN NULL;
+END $$;

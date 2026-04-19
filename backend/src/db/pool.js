@@ -1,16 +1,14 @@
-const { Pool } = require('pg');
+const { Pool } = require('pg')
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' && process.env.DATABASE_URL?.includes('amazonaws.com')
-    ? { rejectUnauthorized: false }
-    : false,
-});
+  ssl: false,
+})
 
 pool.on('error', (err) => {
-  console.error('Unexpected error on idle client', err);
-});
+  console.error('DB pool error:', err)
+})
 
-const query = (text, params) => pool.query(text, params);
+const query = (text, params) => pool.query(text, params)
 
-module.exports = { pool, query };
+module.exports = { pool, query }

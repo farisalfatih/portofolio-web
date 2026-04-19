@@ -1,181 +1,102 @@
-# 🚀 Portfolio Fullstack — Mohammad Faris Al Fatih
+# Portfolio Fullstack — farisalfatih.my.id
 
-Portfolio website dengan admin panel berbasis database. Dibangun dengan **React + Vite**, **Express.js**, dan **PostgreSQL**, dijalankan dengan **Docker Compose**.
+## Cara 1: Docker Compose (Paling mudah)
 
----
-
-## 📦 Struktur Project
-
-```
-portfolio-fullstack/
-├── backend/                  # Express.js API
-│   ├── src/
-│   │   ├── db/
-│   │   │   ├── init.sql      # Schema + seed data
-│   │   │   └── pool.js       # Koneksi PostgreSQL
-│   │   ├── middleware/
-│   │   │   └── auth.js       # JWT middleware
-│   │   ├── routes/           # auth, hero, about, skills, projects, contact, blog
-│   │   └── index.js          # Entry point Express
-│   ├── Dockerfile
-│   └── package.json
-│
-├── frontend/                 # React + Vite
-│   ├── src/
-│   │   ├── app/
-│   │   │   ├── components/   # Navbar, Hero, About, Skills, Portfolio, Contact, Footer
-│   │   │   └── pages/
-│   │   │       └── master/   # Admin panel semua halaman
-│   │   ├── context/
-│   │   │   └── AuthContext.jsx
-│   │   └── lib/
-│   │       └── api.js        # Centralized API calls
-│   ├── Dockerfile
-│   ├── nginx.conf
-│   └── package.json
-│
-├── docker-compose.yml
-├── .env.example
-└── README.md
-```
-
----
-
-## ⚡ Cara Menjalankan (Docker)
-
-### 1. Clone & Setup Environment
+Tidak perlu install Node.js atau PostgreSQL manual.
 
 ```bash
-# Copy file env
-cp .env.example .env
+# 1. Masuk folder project
+cd portfolio-final
 
-# Edit sesuai kebutuhan (opsional)
-nano .env
+# 2. Jalankan (tidak perlu buat .env untuk localhost)
+docker compose up -d --build
+
+# 3. Cek status
+docker compose ps
 ```
 
-### 2. Jalankan dengan Docker Compose
+| Alamat | Keterangan |
+|---|---|
+| http://localhost:3000 | Portfolio |
+| http://localhost:3000/master/login | Admin Panel |
 
-```bash
-docker-compose up --build
-```
-
-Tunggu sampai semua container siap (sekitar 1-2 menit pertama kali).
-
-### 3. Akses Aplikasi
-
-| Layanan       | URL                           |
-|---------------|-------------------------------|
-| Portfolio     | http://localhost:3000         |
-| Admin Panel   | http://localhost:3000/master  |
-| Backend API   | http://localhost:5000         |
+Login: **admin** / **admin123**
 
 ---
 
-## 🔐 Login Admin
+## Cara 2: Manual tanpa Docker
 
-Default credentials:
-
-```
-Username : admin
-Password : admin123
-```
-
-> ⚠️ **Segera ganti password** setelah pertama login melalui menu **Pengaturan** di admin panel!
-
----
-
-## 🎛️ Fitur Admin Panel (`/master`)
-
-| Halaman         | Fungsi                                              |
-|-----------------|-----------------------------------------------------|
-| Dashboard       | Overview statistik konten                           |
-| Hero & Profil   | Edit nama, tagline, quote, link sosial & CV         |
-| Tentang Saya    | Edit 3 paragraf biografi                            |
-| Keahlian        | CRUD kategori skill + skill items                   |
-| Proyek          | CRUD proyek dengan filter tipe, tech stack, dll     |
-| Kontak          | Edit email, telepon, lokasi, WhatsApp, Maps         |
-| Blog            | CRUD artikel + toggle publish/draft                 |
-| Pengaturan      | Ganti password admin                                |
-
----
-
-## 🌐 API Endpoints
-
-### Public (tanpa token)
-```
-GET  /api/hero
-GET  /api/about
-GET  /api/skills
-GET  /api/projects
-GET  /api/contact
-GET  /api/blog
-GET  /api/health
-```
-
-### Protected (butuh Bearer JWT token)
-```
-POST /api/auth/login
-GET  /api/auth/me
-PUT  /api/auth/change-password
-
-PUT  /api/hero
-PUT  /api/about
-PUT  /api/contact
-
-POST /api/skills/categories
-PUT  /api/skills/categories/:id
-DELETE /api/skills/categories/:id
-POST /api/skills
-PUT  /api/skills/:id
-DELETE /api/skills/:id
-
-POST /api/projects
-PUT  /api/projects/:id
-DELETE /api/projects/:id
-
-GET  /api/blog/all
-POST /api/blog
-PUT  /api/blog/:id
-DELETE /api/blog/:id
-```
-
----
-
-## 🛠️ Menjalankan Tanpa Docker (Development)
+### Syarat
+- Node.js v18+
+- PostgreSQL (jalankan `init.sql` dulu)
 
 ### Backend
+
 ```bash
 cd backend
+
+# Buat file .env dari contoh
+cp .env.example .env
+
+# Edit DATABASE_URL jika user/password PostgreSQL berbeda
+# Secara default: postgresql://portfolio_user:portfolio_pass@localhost:5432/portfolio_db
+
 npm install
-# Buat file .env dengan DATABASE_URL, JWT_SECRET
-npm run dev   # Jalankan dengan nodemon
+npm run dev
+# Backend jalan di http://localhost:5000
 ```
 
-### Frontend
+### Frontend (terminal baru)
+
 ```bash
 cd frontend
 npm install
-# Buat file .env.local dengan VITE_API_URL=http://localhost:5000
 npm run dev
+# Frontend jalan di http://localhost:5173
 ```
+
+Buka: **http://localhost:5173/master/login**
+
+> Tidak perlu buat frontend/.env karena Vite sudah proxy /api → localhost:5000 otomatis.
 
 ---
 
-## 🗄️ Database
+## Deploy ke VPS (farisalfatih.my.id)
 
-PostgreSQL di-seed otomatis saat pertama kali dijalankan melalui `backend/src/db/init.sql`.
-
-Untuk reset database:
 ```bash
-docker-compose down -v     # Hapus volume
-docker-compose up --build  # Rebuild dari awal
+# 1. Buat .env dan isi
+cp .env.example .env
+nano .env
+
+# 2. Build dan jalankan
+docker compose up -d --build
 ```
+
+Pastikan port 3000 terbuka di firewall, atau pasang Caddy/Nginx sebagai reverse proxy ke port 3000.
 
 ---
 
-## 📝 Catatan
+## Struktur Folder
 
-- Foto profil (`profile.png`) ada di `frontend/src/assets/images/`
-- Untuk ganti foto, replace file tersebut lalu rebuild container frontend
-- Password di-hash menggunakan bcrypt (tidak tersimpan plaintext)
-- Token JWT berlaku 7 hari (bisa diubah di `.env`)
+```
+portfolio-final/
+├── backend/
+│   ├── src/
+│   │   ├── db/        ← pool.js, init.sql
+│   │   ├── middleware/ ← auth.js
+│   │   └── routes/    ← auth, hero, about, skills, projects, contact, blog, upload
+│   ├── uploads/       ← foto & CV tersimpan di sini
+│   ├── .env.example
+│   └── Dockerfile
+├── frontend/
+│   ├── src/
+│   │   ├── app/
+│   │   │   ├── components/  ← Hero, About, Skills, Portfolio, Contact, Footer, Navbar
+│   │   │   └── pages/master/ ← admin panel pages
+│   │   ├── context/  ← AuthContext
+│   │   └── lib/      ← api.js
+│   ├── nginx.conf
+│   └── Dockerfile
+├── docker-compose.yml
+└── .env.example
+```
