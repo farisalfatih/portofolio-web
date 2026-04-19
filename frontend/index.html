@@ -2,73 +2,20 @@
 <html lang="id">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" id="favicon-link" href="/favicon.png" />
-    <link rel="apple-touch-icon" id="apple-icon" href="/favicon.png" />
+    <link rel="icon" type="image/png" href="/favicon.png" id="favicon-link" />
+    <link rel="apple-touch-icon" href="/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>Faris Al Fatih | Web Developer & Data Engineer</title>
     <meta name="description" content="Portfolio Mohammad Faris Al Fatih — Web Developer & Aspiring Data Engineer dari Gresik, Indonesia." />
     <meta name="author" content="Mohammad Faris Al Fatih" />
-
-    <!-- Open Graph — WhatsApp, FB, LinkedIn -->
-    <meta property="og:type"         content="website" />
-    <meta property="og:site_name"    content="Faris Al Fatih Portfolio" />
-    <meta property="og:title"        id="og-title"  content="Faris Al Fatih | Web Developer & Data Engineer" />
-    <meta property="og:description"  id="og-desc"   content="Halo! Saya Faris — Web Developer & Aspiring Data Engineer dari Gresik. Lihat project dan skill saya." />
-    <meta property="og:url"          id="og-url"    content="https://farisalfatih.my.id" />
-    <meta property="og:image"        id="og-image"  content="https://farisalfatih.my.id/og-image.jpg" />
-    <meta property="og:image:width"  content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:locale"       content="id_ID" />
-
-    <!-- Twitter/X -->
-    <meta name="twitter:card"        content="summary_large_image" />
-    <meta name="twitter:title"       id="tw-title"  content="Faris Al Fatih | Web Developer & Data Engineer" />
-    <meta name="twitter:description" id="tw-desc"   content="Halo! Saya Faris — Web Developer & Aspiring Data Engineer dari Gresik." />
-    <meta name="twitter:image"       id="tw-image"  content="https://farisalfatih.my.id/og-image.jpg" />
-
     <meta name="theme-color" content="#06b6d4" />
 
-    <script>
-      // Update meta tags secara dinamis dari API
-      // Penting: og:image harus URL absolut agar bisa dibaca WhatsApp/bot lain
-      fetch('/api/hero')
-        .then(r => r.json())
-        .then(d => {
-          const hero = d.data
-          if (!hero) return
-
-          // Deteksi base URL otomatis (works di localhost maupun production)
-          const base = window.location.origin
-
-          // Update favicon
-          if (hero.favicon_url) {
-            const faviconUrl = hero.favicon_url.startsWith('http')
-              ? hero.favicon_url
-              : base + hero.favicon_url
-            document.getElementById('favicon-link').href = faviconUrl
-            document.getElementById('apple-icon').href  = faviconUrl
-          }
-
-          // Update OG image — harus URL absolut
-          if (hero.og_image_url) {
-            const ogUrl = hero.og_image_url.startsWith('http')
-              ? hero.og_image_url
-              : base + hero.og_image_url
-            document.getElementById('og-image').setAttribute('content', ogUrl)
-            document.getElementById('tw-image').setAttribute('content', ogUrl)
-          }
-
-          // Update title dengan nama dari DB
-          if (hero.name) {
-            const title = `${hero.name} | ${hero.tagline || 'Web Developer'}`
-            document.title = title
-            document.getElementById('og-title').setAttribute('content', title)
-            document.getElementById('tw-title').setAttribute('content', title)
-          }
-        })
-        .catch(() => {})
-    </script>
+    <!--
+      OG/Twitter meta tags untuk WhatsApp preview ada di endpoint /og
+      Bagikan link: https://farisalfatih.my.id/og
+      Setelah dibuka akan redirect otomatis ke halaman utama
+    -->
   </head>
   <body>
     <div id="root"></div>

@@ -6,10 +6,7 @@ const path    = require('path')
 const app  = express()
 const PORT = process.env.PORT || 5000
 
-// CORS: izinkan semua origin
-// Keamanan sudah dijaga nginx di depan — backend tidak perlu filter origin
 app.use(cors({ origin: true, credentials: true }))
-
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
@@ -25,6 +22,7 @@ app.use('/api/skills',   require('./routes/skills'))
 app.use('/api/projects', require('./routes/projects'))
 app.use('/api/contact',  require('./routes/contact'))
 app.use('/api/blog',     require('./routes/blog'))
+app.use('/og',           require('./routes/og'))   // ← OG meta tags untuk crawler
 
 app.get('/api/health', (_req, res) => {
   res.json({ success: true, message: 'API running 🚀' })
