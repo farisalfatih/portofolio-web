@@ -29,7 +29,6 @@ services:
       DATABASE_URL:   postgresql://${POSTGRES_USER:-portfolio_user}:${POSTGRES_PASSWORD:-portfolio_pass}@postgres:5432/${POSTGRES_DB:-portfolio_db}
       JWT_SECRET:     ${JWT_SECRET:-dev_secret_ganti_ini_di_production}
       JWT_EXPIRES_IN: 7d
-      DOMAIN:         ${DOMAIN:-https://farisalfatih.my.id}
     expose:
       - "5000"
     depends_on:
@@ -49,13 +48,13 @@ services:
       - backend
     networks:
       - internal
-      - proxy_default  # ← gabung ke network NPM
+      - proxy_default  # terhubung ke network Nginx Proxy Manager
 
 networks:
   internal:
     driver: bridge
   proxy_default:
-    external: true  # ← pakai network NPM yang sudah ada
+    external: true  # network milik NPM yang sudah ada
 
 volumes:
   postgres_data:
